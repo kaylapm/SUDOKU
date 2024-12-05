@@ -54,4 +54,5 @@ public class Sudoku extends JFrame {
         SwingUtilities.invokeLater(() -> new Sudoku());
     }
 
+
 }
