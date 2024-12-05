@@ -25,6 +25,7 @@ public class GameBoardPanel extends JPanel {
             }
         }
 
+
         CellInputListener listener = new CellInputListener();
 
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
