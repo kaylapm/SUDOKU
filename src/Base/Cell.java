@@ -1,75 +1,101 @@
 package Base;
 
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.JTextField;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
-public class Cell extends JTextField {
+public class Sudoku extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    public static final Color BG_GIVEN = new Color(240, 240, 240);
+    private GameBoardPanel board = new GameBoardPanel();
+    private Clip clip;
 
+    public Sudoku() {
+        Container cp = getContentPane();
+        cp.setLayout(new BorderLayout());
 
+        // Create a panel for the welcome message, image, and start button
+        JPanel welcomePanel = new JPanel(new BorderLayout());
+        JLabel welcomeLabel = new JLabel("Welcome to Sudoku", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        welcomePanel.add(welcomeLabel, BorderLayout.NORTH);
 
+        // Add an image to the center of the welcome panel
+        ImageIcon icon = new ImageIcon("src/Base/Screenshot 2024-11-28 235732.png"); // Adjust the path to your image
+        JLabel imageLabel = new JLabel(icon);
+        welcomePanel.add(imageLabel, BorderLayout.CENTER);
 
+        JButton startButton = new JButton("Start Game");
+        startButton.setPreferredSize(new Dimension(200, 50)); // Set preferred size for larger button
+        startButton.setFont(new Font("Arial", Font.BOLD, 18)); // Set font size for better visibility
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playSound("src/Base/forgotten-144543.wav"); // Play music when the game starts
+                showLevelSelection();
+            }
+        });
 
-    public static final Color FG_GIVEN = Color.BLACK;
-    public static final Color FG_NOT_GIVEN = Color.GRAY;
-    public static final Color BG_TO_GUESS = Color.YELLOW;
-    public static final Color BG_CORRECT_GUESS = new Color(0, 216, 0);
-    public static final Color BG_WRONG_GUESS = new Color(216, 0, 0);
-    public static final Font FONT_NUMBERS = new Font("OCR A Extended", Font.PLAIN, 28);
+        // Create a panel to center the button at the bottom
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(startButton);
+        welcomePanel.add(buttonPanel, BorderLayout.SOUTH);
 
-    int row, col;
-    int number;
-    CellStatus status;
+        cp.add(welcomePanel, BorderLayout.CENTER);
 
-    public Cell(int row, int col) {
-        super();
-        this.row = row;
-        this.col = col;
-        super.setHorizontalAlignment(JTextField.CENTER);
-        super.setFont(FONT_NUMBERS);
+        pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Sudoku");
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
-    public void newGame(int number, boolean isGiven) {
-        this.number = number;
-        this.status = isGiven ? CellStatus.GIVEN : CellStatus.TO_GUESS;
-        paint();
-    }
+    public void showLevelSelection() {
+        String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
+        int selected = JOptionPane.showOptionDialog(
+                this,
+                "Pilih level kesulitan:",
+                "Select Level",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
 
-    public void paint() {
-        switch (status) {
-            case GIVEN -> {
-                setText(String.valueOf(number));
-                setEditable(false);
-                setBackground(BG_GIVEN);
-                setForeground(FG_GIVEN);
-            }
-            case TO_GUESS -> {
-                setText("");
-                setEditable(true);
-                setBackground(BG_TO_GUESS);
-                setForeground(FG_NOT_GIVEN);
-            }
-            case CORRECT_GUESS -> setBackground(BG_CORRECT_GUESS);
-            case WRONG_GUESS -> setBackground(BG_WRONG_GUESS);
+        if (selected != -1) {
+            showGameBoard(selected + 1);
         }
     }
 
-    public boolean isGiven() {
-        return status == CellStatus.GIVEN;
+    public void showGameBoard(int level) {
+        getContentPane().removeAll();
+        getContentPane().add(board, BorderLayout.CENTER);
+        board.newGame(level);
+        revalidate();
+        repaint();
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    private void playSound(String filePath) {
+        try {
+            if (clip != null && clip.isRunning()) {
+                clip.stop();
+            }
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the audio indefinitely
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public int getRow() {
-        return row;
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Sudoku());
     }
-
-    public int getCol() {
-        return col;
-    }
-}
+}}
