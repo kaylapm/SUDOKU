@@ -10,6 +10,7 @@ public class Cell extends JTextField {
     public static final Color BG_GIVEN = new Color(240, 240, 240);
 
 
+
     public static final Color FG_GIVEN = Color.BLACK;
     public static final Color FG_NOT_GIVEN = Color.GRAY;
     public static final Color BG_TO_GUESS = Color.YELLOW;
