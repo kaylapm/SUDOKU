@@ -8,5 +8,5 @@ public enum CellStatus {
     TO_GUESS,      // need to guess - not attempted yet
     CORRECT_GUESS, // need to guess - correct guess
     WRONG_GUESS,   // need to guess - wrong guess
-    LAGU           // new status for LAGU
+    LAGU
 }
