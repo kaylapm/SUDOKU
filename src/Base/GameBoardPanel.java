@@ -87,6 +87,10 @@ public class GameBoardPanel extends JPanel {
         hintButton.setForeground(Color.BLUE);
         hintButton.addActionListener(e -> useHint());
 
+        JButton quitButton = new JButton("Quit Game");
+        quitButton.setForeground(Color.RED);
+        quitButton.addActionListener(e -> System.exit(0));
+
         timerLabel = new JLabel("Time: 0s");
         timerLabel.setForeground(Color.BLUE);
         scoreLabel = new JLabel("Score: 0");
@@ -103,6 +107,7 @@ public class GameBoardPanel extends JPanel {
         controlPanel.add(levelButton);
         controlPanel.add(resetButton);
         controlPanel.add(hintButton);
+        controlPanel.add(quitButton); // Add the Quit Game button
 
         add(gridPanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.NORTH);
@@ -224,7 +229,48 @@ public class GameBoardPanel extends JPanel {
     public void checkAndShowWinOptions() {
         if (isSolved()) {
             timer.stop();
-            JOptionPane.showMessageDialog(this, "Congratulations! You've solved the puzzle!", "Victory", JOptionPane.INFORMATION_MESSAGE);
+            int option = JOptionPane.showOptionDialog(
+                    this,
+                    "Congratulations! You have passed the puzzle!",
+                    "Victory",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    new String[]{"Next Level", "Select Level", "Quit Game"},
+                    "Next Level"
+            );
+
+            switch (option) {
+                case 0: // Next Level
+                    if (currentLevel < 5) {
+                        newGame(currentLevel + 1);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "You are already at the highest level.");
+                    }
+                    break;
+                case 1: // Select Level
+                    String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
+                    int selected = JOptionPane.showOptionDialog(
+                            this,
+                            "Pilih level kesulitan:",
+                            "Select Level",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]
+                    );
+
+                    if (selected != -1) {
+                        newGame(selected + 1);
+                    }
+                    break;
+                case 2: // Quit Game
+                    System.exit(0);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -282,27 +328,37 @@ public class GameBoardPanel extends JPanel {
     public void showGameOverOptions() {
         int option = JOptionPane.showOptionDialog(
                 this,
-                "Game Over! You've exhausted your attempts.",
+                "Game Over! Would you like to try again?",
                 "Game Over",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.INFORMATION_MESSAGE,
                 null,
-                new String[]{"Retry", "Next Level", "Quit Game"},
-                "Retry"
+                new String[]{"Restart", "Select Level", "Quit Game"},
+                "Restart"
         );
 
         switch (option) {
-            case 0:
+            case 0: // Restart
                 newGame(currentLevel);
                 break;
-            case 1:
-                if (currentLevel < 5) {
-                    newGame(currentLevel + 1);
-                } else {
-                    JOptionPane.showMessageDialog(this, "You are already at the highest level.");
+            case 1: // Select Level
+                String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
+                int selected = JOptionPane.showOptionDialog(
+                        this,
+                        "Pilih level kesulitan:",
+                        "Select Level",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
+
+                if (selected != -1) {
+                    newGame(selected + 1);
                 }
                 break;
-            case 2:
+            case 2: // Quit Game
                 System.exit(0);
                 break;
             default:
