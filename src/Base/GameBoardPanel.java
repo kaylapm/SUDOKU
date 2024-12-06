@@ -22,7 +22,8 @@ public class GameBoardPanel extends JPanel {
     private int score = 0;
     private JLabel scoreLabel;
 
-    private Cell selectedCell; // Declare the selectedCell variable
+    private Cell selectedCell;
+    private JTextField statusBar; // Status bar to display messages
 
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
@@ -36,7 +37,7 @@ public class GameBoardPanel extends JPanel {
                 cells[row][col].addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        selectedCell = (Cell) e.getSource(); // Set the selected cell
+                        selectedCell = (Cell) e.getSource();
                     }
                 });
 
@@ -88,13 +89,19 @@ public class GameBoardPanel extends JPanel {
         controlPanel.add(resetButton);
 
         add(gridPanel, BorderLayout.CENTER);
-        add(controlPanel, BorderLayout.SOUTH);
+        add(controlPanel, BorderLayout.NORTH);
 
         // Add the number pad panel
         JPanel numberPadPanel = createNumberPadPanel();
         add(numberPadPanel, BorderLayout.EAST);
 
-        setPreferredSize(new Dimension(BOARD_WIDTH + 100, BOARD_HEIGHT)); // Adjust width for number pad
+        // Create and add the status bar
+        statusBar = new JTextField("Cells remaining: " + countRemainingCells());
+        statusBar.setEditable(false);
+        statusBar.setHorizontalAlignment(JTextField.CENTER);
+        add(statusBar, BorderLayout.SOUTH);
+
+        setPreferredSize(new Dimension(BOARD_WIDTH + 100, BOARD_HEIGHT + 30)); // Adjust height for status bar
 
         timer = new Timer(1000, e -> updateTimer());
     }
@@ -116,36 +123,63 @@ public class GameBoardPanel extends JPanel {
             if (selectedCell != null && selectedCell.isEditable()) {
                 selectedCell.setText(button.getText());
                 selectedCell.processInput();
+                updateStatusBar();
             }
         });
         return button;
     }
 
+    private int countRemainingCells() {
+        int remaining = 0;
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                if (!cells[row][col].isGiven() && cells[row][col].status != CellStatus.CORRECT_GUESS) {
+                    remaining++;
+                }
+            }
+        }
+        return remaining;
+    }
+
+    private void updateStatusBar() {
+        statusBar.setText("Cells remaining: " + countRemainingCells());
+    }
+
     public void newGame(int level) {
-        this.currentLevel = level;
         int cellsToGuess;
         switch (level) {
-            case 1 -> cellsToGuess = 3;
-            case 2 -> cellsToGuess = 5;
-            case 3 -> cellsToGuess = 15;
-            case 4 -> cellsToGuess = 20;
-            case 5 -> cellsToGuess = 25;
-            default -> throw new IllegalArgumentException("Invalid level: " + level);
+            case 1:
+                cellsToGuess = 3;
+                break;
+            case 2:
+                cellsToGuess = 5;
+                break;
+            case 3:
+                cellsToGuess = 10;
+                break;
+            case 4:
+                cellsToGuess = 20;
+                break;
+            case 5:
+                cellsToGuess = 30;
+                break;
+            default:
+                cellsToGuess = 3; // Default to level 1 if an invalid level is provided
+                break;
         }
-        puzzle.newPuzzle(cellsToGuess);
 
+        puzzle.newPuzzle(cellsToGuess);
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 cells[row][col].newGame(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
             }
         }
-
+        currentLevel = level;
         elapsedTime = 0;
-        timerLabel.setText("Time: 0s");
-        timer.start();
-
         score = 0;
-        scoreLabel.setText("Score: 0");
+        updateScore(0);
+        updateStatusBar();
+        timer.start();
     }
 
     public void updateScore(int delta) {
@@ -171,29 +205,35 @@ public class GameBoardPanel extends JPanel {
 
     public void checkAndShowWinOptions() {
         if (isSolved()) {
-            showWinOptions();
-        }
-    }
+            timer.stop();
+            int option = JOptionPane.showOptionDialog(
+                    this,
+                    "Congratulations! You've solved the puzzle.",
+                    "Puzzle Solved",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    new String[]{"New Game", "Next Level", "Quit Game"},
+                    "New Game"
+            );
 
-    private void showWinOptions() {
-        timer.stop();
-        int option = JOptionPane.showOptionDialog(
-                this,
-                "Congratulations! You solved the puzzle.",
-                "Puzzle Solved",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                new String[]{"New Game", "Next Level", "Quit Game"},
-                "New Game"
-        );
-
-        if (option == JOptionPane.YES_OPTION) {
-            newGame(currentLevel);
-        } else if (option == JOptionPane.NO_OPTION && currentLevel < 5) {
-            newGame(currentLevel + 1);
-        } else if (option == JOptionPane.CANCEL_OPTION) {
-            System.exit(0);
+            switch (option) {
+                case 0: // New Game
+                    newGame(currentLevel);
+                    break;
+                case 1: // Next Level
+                    if (currentLevel < 5) {
+                        newGame(currentLevel + 1);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "You are already at the highest level.");
+                    }
+                    break;
+                case 2: // Quit Game
+                    System.exit(0);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
