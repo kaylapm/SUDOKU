@@ -49,6 +49,7 @@ public class Cell extends JTextField {
                             status = CellStatus.WRONG_GUESS;
                         }
                         paint();
+                        gameBoardPanel.checkAndShowWinOptions(); // Check if the game is solved
                     }
                 }
             }

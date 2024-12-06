@@ -42,15 +42,6 @@ public class GameBoardPanel extends JPanel {
             }
         }
 
-        CellInputListener listener = new CellInputListener();
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                if (!cells[row][col].isGiven()) {
-                    cells[row][col].addActionListener(listener);
-                }
-            }
-        }
-
         JPanel controlPanel = new JPanel();
         controlPanel.setBackground(Color.WHITE);
 
@@ -143,34 +134,29 @@ public class GameBoardPanel extends JPanel {
         return true;
     }
 
-    private void showWinOptions() {
+    public void checkAndShowWinOptions() {
         if (isSolved()) {
-            timer.stop();
-            int option = JOptionPane.showOptionDialog(
-                    this,
-                    "Congratulations! You solved the puzzle.",
-                    "Puzzle Solved",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    new String[]{"New Game", "Next Level"},
-                    "New Game"
-            );
-
-            if (option == JOptionPane.YES_OPTION) {
-                newGame(currentLevel);
-            } else if (option == JOptionPane.NO_OPTION && currentLevel < 5) {
-                newGame(currentLevel + 1);
-            }
+            showWinOptions();
         }
     }
 
-    private class CellInputListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (isSolved()) {
-                showWinOptions();
-            }
+    private void showWinOptions() {
+        timer.stop();
+        int option = JOptionPane.showOptionDialog(
+                this,
+                "Congratulations! You solved the puzzle.",
+                "Puzzle Solved",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                new String[]{"New Game", "Next Level"},
+                "New Game"
+        );
+
+        if (option == JOptionPane.YES_OPTION) {
+            newGame(currentLevel);
+        } else if (option == JOptionPane.NO_OPTION && currentLevel < 5) {
+            newGame(currentLevel + 1);
         }
     }
 }
