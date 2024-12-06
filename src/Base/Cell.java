@@ -20,11 +20,13 @@ public class Cell extends JTextField {
     int row, col;
     int number;
     CellStatus status;
+    private GameBoardPanel gameBoardPanel;
 
-    public Cell(int row, int col) {
+    public Cell(int row, int col, GameBoardPanel gameBoardPanel) {
         super();
         this.row = row;
         this.col = col;
+        this.gameBoardPanel = gameBoardPanel;
         super.setHorizontalAlignment(JTextField.CENTER);
         super.setFont(FONT_NUMBERS);
 
@@ -36,8 +38,14 @@ public class Cell extends JTextField {
                     if (input.matches("\\d")) { // Check if input is a single digit
                         int enteredNumber = Integer.parseInt(input);
                         if (enteredNumber == number) {
+                            if (status != CellStatus.CORRECT_GUESS) {
+                                gameBoardPanel.updateScore(10); // Increase score by 10
+                            }
                             status = CellStatus.CORRECT_GUESS;
                         } else {
+                            if (status != CellStatus.WRONG_GUESS) {
+                                gameBoardPanel.updateScore(-5); // Decrease score by 5
+                            }
                             status = CellStatus.WRONG_GUESS;
                         }
                         paint();
