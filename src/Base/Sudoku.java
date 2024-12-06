@@ -36,7 +36,7 @@ public class Sudoku extends JFrame {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                playSound("src/Base/forgotten-144543.wav"); // Play music when the game starts
+                playSound("src/Base/lagu.wav"); // Play music when the game starts
                 showLevelSelection();
             }
         });
