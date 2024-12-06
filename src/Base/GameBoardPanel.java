@@ -3,6 +3,10 @@ package Base;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 
 public class GameBoardPanel extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -107,7 +111,7 @@ public class GameBoardPanel extends JPanel {
         controlPanel.add(levelButton);
         controlPanel.add(resetButton);
         controlPanel.add(hintButton);
-        controlPanel.add(quitButton); // Add the Quit Game button
+        controlPanel.add(quitButton);
 
         add(gridPanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.NORTH);
@@ -123,6 +127,17 @@ public class GameBoardPanel extends JPanel {
         setPreferredSize(new Dimension(BOARD_WIDTH + 100, BOARD_HEIGHT + 30));
 
         timer = new Timer(1000, e -> updateTimer());
+    }
+
+    private void playSoundEffect(String filePath) {
+        try {
+            Clip soundEffectClip = AudioSystem.getClip();
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+            soundEffectClip.open(audioInputStream);
+            soundEffectClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private JPanel createNumberPadPanel() {
@@ -326,6 +341,8 @@ public class GameBoardPanel extends JPanel {
     }
 
     public void showGameOverOptions() {
+        playSoundEffect("src/Base/gameover.wav"); // Play game over sound effect
+
         int option = JOptionPane.showOptionDialog(
                 this,
                 "Game Over! Would you like to try again?",

@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         // Jalankan aplikasi di Event Dispatch Thread (EDT)
         SwingUtilities.invokeLater(() -> {
-            // Buat instansi utama SudokuMain (asumsikan ini adalah kelas utama)
+            // Buat instansi utama Sudoku
             Sudoku sudoku = new Sudoku();
             sudoku.setVisible(true); // Tampilkan GUI
         });
