@@ -21,6 +21,7 @@ public class Cell extends JTextField {
     int number;
     CellStatus status;
     private GameBoardPanel gameBoardPanel;
+    private int attempts = 0;
 
     public Cell(int row, int col, GameBoardPanel gameBoardPanel) {
         super();
@@ -33,7 +34,7 @@ public class Cell extends JTextField {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                processInput(); // Call the new processInput method
+                processInput();
             }
         });
     }
@@ -41,21 +42,27 @@ public class Cell extends JTextField {
     public void processInput() {
         if (status == CellStatus.TO_GUESS || status == CellStatus.WRONG_GUESS) {
             String input = getText();
-            if (input.matches("\\d")) { // Check if input is a single digit
+            if (input.matches("\\d")) {
                 int enteredNumber = Integer.parseInt(input);
                 if (enteredNumber == number) {
                     if (status != CellStatus.CORRECT_GUESS) {
-                        gameBoardPanel.updateScore(10); // Increase score by 10
+                        gameBoardPanel.updateScore(10);
                     }
                     status = CellStatus.CORRECT_GUESS;
+                    attempts = 0;
                 } else {
                     if (status != CellStatus.WRONG_GUESS) {
-                        gameBoardPanel.updateScore(-5); // Decrease score by 5
+                        gameBoardPanel.updateScore(-5);
                     }
                     status = CellStatus.WRONG_GUESS;
+                    attempts++;
+                    gameBoardPanel.decreaseLives();
+                    if (attempts >= 3) {
+                        gameBoardPanel.showGameOverOptions();
+                    }
                 }
                 paint();
-                gameBoardPanel.checkAndShowWinOptions(); // Check if the game is solved
+                gameBoardPanel.checkAndShowWinOptions();
             }
         }
     }

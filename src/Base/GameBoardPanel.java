@@ -23,7 +23,9 @@ public class GameBoardPanel extends JPanel {
     private JLabel scoreLabel;
 
     private Cell selectedCell;
-    private JTextField statusBar; // Status bar to display messages
+    private JTextField statusBar;
+    private JLabel livesLabel;
+    private int lives = 3; // Initialize lives
 
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
@@ -41,7 +43,6 @@ public class GameBoardPanel extends JPanel {
                     }
                 });
 
-                // Set blue borders for 3x3 grid outlines
                 int top = (row % 3 == 0) ? 3 : 1;
                 int left = (col % 3 == 0) ? 3 : 1;
                 int bottom = (row == SudokuConstants.GRID_SIZE - 1 || (row + 1) % 3 == 0) ? 3 : 1;
@@ -82,26 +83,27 @@ public class GameBoardPanel extends JPanel {
         timerLabel.setForeground(Color.BLUE);
         scoreLabel = new JLabel("Score: 0");
         scoreLabel.setForeground(Color.BLUE);
+        livesLabel = new JLabel("Lives: " + lives);
+        livesLabel.setForeground(Color.RED);
 
         controlPanel.add(timerLabel);
         controlPanel.add(scoreLabel);
+        controlPanel.add(livesLabel);
         controlPanel.add(levelButton);
         controlPanel.add(resetButton);
 
         add(gridPanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.NORTH);
 
-        // Add the number pad panel
         JPanel numberPadPanel = createNumberPadPanel();
         add(numberPadPanel, BorderLayout.EAST);
 
-        // Create and add the status bar
         statusBar = new JTextField("Cells remaining: " + countRemainingCells());
         statusBar.setEditable(false);
         statusBar.setHorizontalAlignment(JTextField.CENTER);
         add(statusBar, BorderLayout.SOUTH);
 
-        setPreferredSize(new Dimension(BOARD_WIDTH + 100, BOARD_HEIGHT + 30)); // Adjust height for status bar
+        setPreferredSize(new Dimension(BOARD_WIDTH + 100, BOARD_HEIGHT + 30));
 
         timer = new Timer(1000, e -> updateTimer());
     }
@@ -164,7 +166,7 @@ public class GameBoardPanel extends JPanel {
                 cellsToGuess = 30;
                 break;
             default:
-                cellsToGuess = 3; // Default to level 1 if an invalid level is provided
+                cellsToGuess = 3;
                 break;
         }
 
@@ -179,6 +181,8 @@ public class GameBoardPanel extends JPanel {
         score = 0;
         updateScore(0);
         updateStatusBar();
+        lives = 3;
+        updateLivesLabel(lives);
         timer.start();
     }
 
@@ -218,22 +222,65 @@ public class GameBoardPanel extends JPanel {
             );
 
             switch (option) {
-                case 0: // New Game
+                case 0:
                     newGame(currentLevel);
                     break;
-                case 1: // Next Level
+                case 1:
                     if (currentLevel < 5) {
                         newGame(currentLevel + 1);
                     } else {
                         JOptionPane.showMessageDialog(this, "You are already at the highest level.");
                     }
                     break;
-                case 2: // Quit Game
+                case 2:
                     System.exit(0);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    public void showGameOverOptions() {
+        int option = JOptionPane.showOptionDialog(
+                this,
+                "Game Over! You've exhausted your attempts.",
+                "Game Over",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                new String[]{"Retry", "Next Level", "Quit Game"},
+                "Retry"
+        );
+
+        switch (option) {
+            case 0:
+                newGame(currentLevel);
+                break;
+            case 1:
+                if (currentLevel < 5) {
+                    newGame(currentLevel + 1);
+                } else {
+                    JOptionPane.showMessageDialog(this, "You are already at the highest level.");
+                }
+                break;
+            case 2:
+                System.exit(0);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void decreaseLives() {
+        lives--;
+        updateLivesLabel(lives);
+        if (lives <= 0) {
+            showGameOverOptions();
+        }
+    }
+
+    public void updateLivesLabel(int lives) {
+        livesLabel.setText("Lives: " + lives);
     }
 }
