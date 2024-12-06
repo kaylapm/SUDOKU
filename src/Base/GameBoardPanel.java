@@ -24,11 +24,13 @@ public class GameBoardPanel extends JPanel {
 
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
+        super.setBackground(Color.WHITE);
 
         JPanel gridPanel = new JPanel(new GridLayout(SudokuConstants.GRID_SIZE, SudokuConstants.GRID_SIZE));
+        gridPanel.setBackground(Color.WHITE);
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                cells[row][col] = new Cell(row, col);
+                cells[row][col] = new Cell(row, col, this);
 
                 int top = (row % 3 == 0) ? 3 : 1;
                 int left = (col % 3 == 0) ? 3 : 1;
@@ -50,7 +52,10 @@ public class GameBoardPanel extends JPanel {
         }
 
         JPanel controlPanel = new JPanel();
+        controlPanel.setBackground(Color.WHITE);
+
         JButton levelButton = new JButton("Select Level");
+        levelButton.setForeground(Color.BLUE);
         levelButton.addActionListener(e -> {
             String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
             int selected = JOptionPane.showOptionDialog(
@@ -69,10 +74,14 @@ public class GameBoardPanel extends JPanel {
         });
 
         JButton resetButton = new JButton("Reset Game");
+        resetButton.setForeground(Color.BLUE);
         resetButton.addActionListener(e -> newGame(currentLevel));
 
         timerLabel = new JLabel("Time: 0s");
+        timerLabel.setForeground(Color.BLUE);
         scoreLabel = new JLabel("Score: 0");
+        scoreLabel.setForeground(Color.BLUE);
+
         controlPanel.add(timerLabel);
         controlPanel.add(scoreLabel);
         controlPanel.add(levelButton);
@@ -90,11 +99,11 @@ public class GameBoardPanel extends JPanel {
         this.currentLevel = level;
         int cellsToGuess;
         switch (level) {
-            case 1 -> cellsToGuess = 3;  // Level 1: 3 empty cells
-            case 2 -> cellsToGuess = 5;  // Level 2: 5 empty cells
-            case 3 -> cellsToGuess = 10; // Level 3: 10 empty cells
-            case 4 -> cellsToGuess = 20; // Level 4: 20 empty cells
-            case 5 -> cellsToGuess = 30; // Level 5: 30 empty cells
+            case 1 -> cellsToGuess = 3;
+            case 2 -> cellsToGuess = 5;
+            case 3 -> cellsToGuess = 10;
+            case 4 -> cellsToGuess = 20;
+            case 5 -> cellsToGuess = 30;
             default -> throw new IllegalArgumentException("Invalid level: " + level);
         }
         puzzle.newPuzzle(cellsToGuess);
@@ -111,6 +120,11 @@ public class GameBoardPanel extends JPanel {
 
         score = 0;
         scoreLabel.setText("Score: 0");
+    }
+
+    public void updateScore(int delta) {
+        score += delta;
+        scoreLabel.setText("Score: " + score);
     }
 
     private void updateTimer() {
