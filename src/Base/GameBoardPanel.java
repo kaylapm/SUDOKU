@@ -244,6 +244,8 @@ public class GameBoardPanel extends JPanel {
     public void checkAndShowWinOptions() {
         if (isSolved()) {
             timer.stop();
+            playSoundEffect("src/Base/victory.wav"); // Play victory sound effect
+
             int option = JOptionPane.showOptionDialog(
                     this,
                     "Congratulations! You have passed the puzzle!",
