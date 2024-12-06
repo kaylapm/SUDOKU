@@ -26,7 +26,7 @@ public class Sudoku extends JFrame {
         welcomePanel.add(welcomeLabel, BorderLayout.NORTH);
 
         // Add an image to the center of the welcome panel
-        ImageIcon icon = new ImageIcon("src/Base/Screenshot 2024-11-28 235732.png"); // Adjust the path to your image
+        ImageIcon icon = new ImageIcon("src/Base/background.jpeg"); // Adjust the path to your image
         JLabel imageLabel = new JLabel(icon);
         welcomePanel.add(imageLabel, BorderLayout.CENTER);
 
@@ -56,7 +56,7 @@ public class Sudoku extends JFrame {
     }
 
     public void showLevelSelection() {
-        String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
+        String[] options = {"Level 5", "Level 4", "Level 3", "Level 2", "Level 1"};
         int selected = JOptionPane.showOptionDialog(
                 this,
                 "Pilih level kesulitan:",
@@ -65,12 +65,14 @@ public class Sudoku extends JFrame {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 options,
-                options[0]);
+                options[4] // Highlight default Level 1
+        );
 
         if (selected != -1) {
             showGameBoard(selected + 1);
         }
     }
+
 
     public void showGameBoard(int level) {
         getContentPane().removeAll();

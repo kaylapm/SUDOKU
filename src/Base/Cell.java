@@ -3,6 +3,9 @@ package Base;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 
 public class Cell extends JTextField {
     private static final long serialVersionUID = 1L;

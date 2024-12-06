@@ -29,6 +29,14 @@ public class GameBoardPanel extends JPanel {
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 cells[row][col] = new Cell(row, col);
+
+                // Add thick borders at every 3x3 block
+                int top = (row % 3 == 0) ? 3 : 1;
+                int left = (col % 3 == 0) ? 3 : 1;
+                int bottom = (row == SudokuConstants.GRID_SIZE - 1 || (row + 1) % 3 == 0) ? 3 : 1;
+                int right = (col == SudokuConstants.GRID_SIZE - 1 || (col + 1) % 3 == 0) ? 3 : 1;
+
+                cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
                 gridPanel.add(cells[row][col]);
             }
         }
@@ -45,7 +53,7 @@ public class GameBoardPanel extends JPanel {
         JPanel controlPanel = new JPanel();
         JButton levelButton = new JButton("Select Level");
         levelButton.addActionListener(e -> {
-            String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
+            String[] options = {"Level 5", "Level 4", "Level 3", "Level 2", "Level 1"};
             int selected = JOptionPane.showOptionDialog(
                     this,
                     "Pilih level kesulitan:",
@@ -84,11 +92,11 @@ public class GameBoardPanel extends JPanel {
         this.currentLevel = level;
         int cellsToGuess;
         switch (level) {
-            case 1 -> cellsToGuess = 3;  // Level mudah
-            case 2 -> cellsToGuess = 5;  // Level menengah
-            case 3 -> cellsToGuess = 10; // Level sulit
-            case 4 -> cellsToGuess = 10; // Level lebih sulit
-            case 5 -> cellsToGuess = 20; // Level sangat sulit
+            case 5 -> cellsToGuess = 3;  // Level 1: Easy
+            case 4 -> cellsToGuess = 5;  // Level 2: Medium
+            case 3 -> cellsToGuess = 10; // Level 3: Hard
+            case 2 -> cellsToGuess = 15; // Level 4: Harder
+            case 1 -> cellsToGuess = 20; // Level 5: Very Hard
             default -> throw new IllegalArgumentException("Invalid level: " + level);
         }
         puzzle.newPuzzle(cellsToGuess);
