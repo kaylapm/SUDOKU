@@ -32,12 +32,13 @@ public class GameBoardPanel extends JPanel {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 cells[row][col] = new Cell(row, col, this);
 
+                // Set blue borders for 3x3 grid outlines
                 int top = (row % 3 == 0) ? 3 : 1;
                 int left = (col % 3 == 0) ? 3 : 1;
                 int bottom = (row == SudokuConstants.GRID_SIZE - 1 || (row + 1) % 3 == 0) ? 3 : 1;
                 int right = (col == SudokuConstants.GRID_SIZE - 1 || (col + 1) % 3 == 0) ? 3 : 1;
 
-                cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
+                cells[row][col].setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLUE));
                 gridPanel.add(cells[row][col]);
             }
         }
@@ -146,10 +147,10 @@ public class GameBoardPanel extends JPanel {
                 this,
                 "Congratulations! You solved the puzzle.",
                 "Puzzle Solved",
-                JOptionPane.YES_NO_OPTION,
+                JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE,
                 null,
-                new String[]{"New Game", "Next Level"},
+                new String[]{"New Game", "Next Level", "Quit Game"},
                 "New Game"
         );
 
@@ -157,6 +158,8 @@ public class GameBoardPanel extends JPanel {
             newGame(currentLevel);
         } else if (option == JOptionPane.NO_OPTION && currentLevel < 5) {
             newGame(currentLevel + 1);
+        } else if (option == JOptionPane.CANCEL_OPTION) {
+            System.exit(0); // Exit the application
         }
     }
 }
