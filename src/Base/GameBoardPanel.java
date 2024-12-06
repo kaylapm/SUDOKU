@@ -147,10 +147,10 @@ public class GameBoardPanel extends JPanel {
                 this,
                 "Congratulations! You solved the puzzle.",
                 "Puzzle Solved",
-                JOptionPane.YES_NO_OPTION,
+                JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE,
                 null,
-                new String[]{"New Game", "Next Level"},
+                new String[]{"New Game", "Next Level", "Quit Game"},
                 "New Game"
         );
 
@@ -158,6 +158,8 @@ public class GameBoardPanel extends JPanel {
             newGame(currentLevel);
         } else if (option == JOptionPane.NO_OPTION && currentLevel < 5) {
             newGame(currentLevel + 1);
+        } else if (option == JOptionPane.CANCEL_OPTION) {
+            System.exit(0); // Exit the application
         }
     }
 }
