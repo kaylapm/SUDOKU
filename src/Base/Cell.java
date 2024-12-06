@@ -6,7 +6,6 @@ import javax.swing.JTextField;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-
 public class Cell extends JTextField {
     private static final long serialVersionUID = 1L;
 
@@ -16,7 +15,6 @@ public class Cell extends JTextField {
     public static final Color BG_TO_GUESS = Color.YELLOW;
     public static final Color BG_CORRECT_GUESS = new Color(0, 216, 0);
     public static final Color BG_WRONG_GUESS = new Color(216, 0, 0);
-    public static final Color BG_LAGU = new Color(0, 0, 216); // Example color for LAGU
     public static final Font FONT_NUMBERS = new Font("OCR A Extended", Font.PLAIN, 28);
 
     int row, col;
@@ -29,6 +27,24 @@ public class Cell extends JTextField {
         this.col = col;
         super.setHorizontalAlignment(JTextField.CENTER);
         super.setFont(FONT_NUMBERS);
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (status == CellStatus.TO_GUESS || status == CellStatus.WRONG_GUESS) {
+                    String input = getText();
+                    if (input.matches("\\d")) { // Check if input is a single digit
+                        int enteredNumber = Integer.parseInt(input);
+                        if (enteredNumber == number) {
+                            status = CellStatus.CORRECT_GUESS;
+                        } else {
+                            status = CellStatus.WRONG_GUESS;
+                        }
+                        paint();
+                    }
+                }
+            }
+        });
     }
 
     public void newGame(int number, boolean isGiven) {
@@ -51,13 +67,13 @@ public class Cell extends JTextField {
                 setBackground(BG_TO_GUESS);
                 setForeground(FG_NOT_GIVEN);
             }
-            case CORRECT_GUESS -> setBackground(BG_CORRECT_GUESS);
-            case WRONG_GUESS -> setBackground(BG_WRONG_GUESS);
-            case LAGU -> {
-                setText("LAGU"); // Example text for LAGU
-                setEditable(false);
-                setBackground(BG_LAGU);
+            case CORRECT_GUESS -> {
+                setBackground(BG_CORRECT_GUESS);
                 setForeground(FG_GIVEN);
+            }
+            case WRONG_GUESS -> {
+                setBackground(BG_WRONG_GUESS);
+                setForeground(FG_NOT_GIVEN);
             }
         }
     }

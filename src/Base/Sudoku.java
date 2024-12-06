@@ -1,12 +1,12 @@
 package Base;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.io.File;
 
 public class Sudoku extends JFrame {
@@ -56,7 +56,7 @@ public class Sudoku extends JFrame {
     }
 
     public void showLevelSelection() {
-        String[] options = {"Level 5", "Level 4", "Level 3", "Level 2", "Level 1"};
+        String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
         int selected = JOptionPane.showOptionDialog(
                 this,
                 "Pilih level kesulitan:",
@@ -65,14 +65,13 @@ public class Sudoku extends JFrame {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 options,
-                options[4] // Highlight default Level 1
+                options[0] // Highlight default Level 1
         );
 
         if (selected != -1) {
             showGameBoard(selected + 1);
         }
     }
-
 
     public void showGameBoard(int level) {
         getContentPane().removeAll();
