@@ -244,7 +244,7 @@ public class GameBoardPanel extends JPanel {
     public void checkAndShowWinOptions() {
         if (isSolved()) {
             timer.stop();
-            playSoundEffect("src/Base/victory.wav"); // Play victory sound effect
+            playSoundEffect("src/Base/victory.wav");
 
             int option = JOptionPane.showOptionDialog(
                     this,
@@ -343,7 +343,7 @@ public class GameBoardPanel extends JPanel {
     }
 
     public void showGameOverOptions() {
-        playSoundEffect("src/Base/gameover.wav"); // Play game over sound effect
+        playSoundEffect("src/Base/gameover.wav");
 
         int option = JOptionPane.showOptionDialog(
                 this,
@@ -357,10 +357,10 @@ public class GameBoardPanel extends JPanel {
         );
 
         switch (option) {
-            case 0: // Restart
+            case 0:
                 newGame(currentLevel);
                 break;
-            case 1: // Select Level
+            case 1:
                 String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
                 int selected = JOptionPane.showOptionDialog(
                         this,
@@ -377,7 +377,7 @@ public class GameBoardPanel extends JPanel {
                     newGame(selected + 1);
                 }
                 break;
-            case 2: // Quit Game
+            case 2:
                 System.exit(0);
                 break;
             default:

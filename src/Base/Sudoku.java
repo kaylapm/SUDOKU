@@ -19,29 +19,28 @@ public class Sudoku extends JFrame {
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
-        // Create a panel for the welcome message, image, and start button
         JPanel welcomePanel = new JPanel(new BorderLayout());
         JLabel welcomeLabel = new JLabel("Welcome to Sudoku", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         welcomePanel.add(welcomeLabel, BorderLayout.NORTH);
 
-        // Add an image to the center of the welcome panel
-        ImageIcon icon = new ImageIcon("src/Base/background.jpeg"); // Adjust the path to your image
+
+        ImageIcon icon = new ImageIcon("src/Base/background.jpeg");
         JLabel imageLabel = new JLabel(icon);
         welcomePanel.add(imageLabel, BorderLayout.CENTER);
 
         JButton startButton = new JButton("Start Game");
-        startButton.setPreferredSize(new Dimension(200, 50)); // Set preferred size for larger button
-        startButton.setFont(new Font("Arial", Font.BOLD, 18)); // Set font size for better visibility
+        startButton.setPreferredSize(new Dimension(200, 50));
+        startButton.setFont(new Font("Arial", Font.BOLD, 18));
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                playSound("src/Base/lagu.wav"); // Play music when the game starts
+                playSound("src/Base/lagu.wav");
                 showLevelSelection();
             }
         });
 
-        // Create a panel to center the button at the bottom
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(startButton);
         welcomePanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -65,7 +64,7 @@ public class Sudoku extends JFrame {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 options,
-                options[0] // Highlight default Level 1
+                options[0]
         );
 
         if (selected != -1) {
@@ -89,7 +88,7 @@ public class Sudoku extends JFrame {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-            clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the audio indefinitely
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
         } catch (Exception e) {
             e.printStackTrace();
