@@ -22,6 +22,8 @@ public class GameBoardPanel extends JPanel {
     private int score = 0;
     private JLabel scoreLabel;
 
+    private Cell selectedCell; // Declare the selectedCell variable
+
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
         super.setBackground(Color.WHITE);
@@ -31,6 +33,12 @@ public class GameBoardPanel extends JPanel {
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 cells[row][col] = new Cell(row, col, this);
+                cells[row][col].addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        selectedCell = (Cell) e.getSource(); // Set the selected cell
+                    }
+                });
 
                 // Set blue borders for 3x3 grid outlines
                 int top = (row % 3 == 0) ? 3 : 1;
@@ -82,9 +90,35 @@ public class GameBoardPanel extends JPanel {
         add(gridPanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.SOUTH);
 
-        setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
+        // Add the number pad panel
+        JPanel numberPadPanel = createNumberPadPanel();
+        add(numberPadPanel, BorderLayout.EAST);
+
+        setPreferredSize(new Dimension(BOARD_WIDTH + 100, BOARD_HEIGHT)); // Adjust width for number pad
 
         timer = new Timer(1000, e -> updateTimer());
+    }
+
+    private JPanel createNumberPadPanel() {
+        JPanel numberPadPanel = new JPanel(new GridLayout(3, 3, 5, 5));
+        numberPadPanel.setBackground(Color.LIGHT_GRAY);
+        for (int i = 1; i <= 9; i++) {
+            JButton button = createNumberButton(i);
+            numberPadPanel.add(button);
+        }
+        return numberPadPanel;
+    }
+
+    private JButton createNumberButton(int number) {
+        JButton button = new JButton(String.valueOf(number));
+        button.setFont(new Font("Arial", Font.BOLD, 20));
+        button.addActionListener(e -> {
+            if (selectedCell != null && selectedCell.isEditable()) {
+                selectedCell.setText(button.getText());
+                selectedCell.processInput();
+            }
+        });
+        return button;
     }
 
     public void newGame(int level) {
@@ -93,9 +127,9 @@ public class GameBoardPanel extends JPanel {
         switch (level) {
             case 1 -> cellsToGuess = 3;
             case 2 -> cellsToGuess = 5;
-            case 3 -> cellsToGuess = 10;
+            case 3 -> cellsToGuess = 15;
             case 4 -> cellsToGuess = 20;
-            case 5 -> cellsToGuess = 30;
+            case 5 -> cellsToGuess = 25;
             default -> throw new IllegalArgumentException("Invalid level: " + level);
         }
         puzzle.newPuzzle(cellsToGuess);
@@ -159,7 +193,7 @@ public class GameBoardPanel extends JPanel {
         } else if (option == JOptionPane.NO_OPTION && currentLevel < 5) {
             newGame(currentLevel + 1);
         } else if (option == JOptionPane.CANCEL_OPTION) {
-            System.exit(0); // Exit the application
+            System.exit(0);
         }
     }
 }
