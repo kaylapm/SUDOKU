@@ -1,8 +1,8 @@
 package Base;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 
 public class GameBoardPanel extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -22,10 +22,14 @@ public class GameBoardPanel extends JPanel {
     private int score = 0;
     private JLabel scoreLabel;
 
+    private int lives = 3;
+    private JLabel livesLabel;
+
+    private int hints = 3;
+    private JLabel hintsLabel;
+
     private Cell selectedCell;
     private JTextField statusBar;
-    private JLabel livesLabel;
-    private int lives = 3; // Initialize lives
 
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
@@ -79,18 +83,26 @@ public class GameBoardPanel extends JPanel {
         resetButton.setForeground(Color.BLUE);
         resetButton.addActionListener(e -> newGame(currentLevel));
 
+        JButton hintButton = new JButton("Hint");
+        hintButton.setForeground(Color.BLUE);
+        hintButton.addActionListener(e -> useHint());
+
         timerLabel = new JLabel("Time: 0s");
         timerLabel.setForeground(Color.BLUE);
         scoreLabel = new JLabel("Score: 0");
         scoreLabel.setForeground(Color.BLUE);
         livesLabel = new JLabel("Lives: " + lives);
         livesLabel.setForeground(Color.RED);
+        hintsLabel = new JLabel("Hints: " + hints);
+        hintsLabel.setForeground(Color.GREEN);
 
         controlPanel.add(timerLabel);
         controlPanel.add(scoreLabel);
         controlPanel.add(livesLabel);
+        controlPanel.add(hintsLabel);
         controlPanel.add(levelButton);
         controlPanel.add(resetButton);
+        controlPanel.add(hintButton);
 
         add(gridPanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.NORTH);
@@ -183,6 +195,8 @@ public class GameBoardPanel extends JPanel {
         updateStatusBar();
         lives = 3;
         updateLivesLabel(lives);
+        hints = 3; // Reset hints
+        updateHintsLabel(hints);
         timer.start();
     }
 
@@ -210,34 +224,58 @@ public class GameBoardPanel extends JPanel {
     public void checkAndShowWinOptions() {
         if (isSolved()) {
             timer.stop();
-            int option = JOptionPane.showOptionDialog(
-                    this,
-                    "Congratulations! You've solved the puzzle.",
-                    "Puzzle Solved",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    new String[]{"New Game", "Next Level", "Quit Game"},
-                    "New Game"
-            );
+            JOptionPane.showMessageDialog(this, "Congratulations! You've solved the puzzle!", "Victory", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
-            switch (option) {
-                case 0:
-                    newGame(currentLevel);
-                    break;
-                case 1:
-                    if (currentLevel < 5) {
-                        newGame(currentLevel + 1);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "You are already at the highest level.");
+    public void decreaseLives() {
+        lives--;
+        updateLivesLabel(lives);
+        if (lives <= 0) {
+            showGameOverOptions();
+        }
+    }
+
+    public void updateLivesLabel(int lives) {
+        livesLabel.setText("Lives: " + lives);
+    }
+
+    private void updateHintsLabel(int hints) {
+        hintsLabel.setText("Hints: " + hints);
+    }
+
+    private void useHint() {
+        if (hints > 0) {
+            for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+                for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                    if (!cells[row][col].isGiven() && cells[row][col].status != CellStatus.CORRECT_GUESS) {
+                        cells[row][col].applyHint(puzzle.numbers[row][col]);
+                        hints--;
+                        updateHintsLabel(hints);
+                        updateStatusBar();
+                        checkIfAllHintsUsed();
+                        return;
                     }
-                    break;
-                case 2:
-                    System.exit(0);
-                    break;
-                default:
-                    break;
+                }
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "No hints left!", "Hint", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void checkIfAllHintsUsed() {
+        boolean allHintsUsed = true;
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                if (!cells[row][col].isGiven() && cells[row][col].status != CellStatus.CORRECT_GUESS) {
+                    allHintsUsed = false;
+                    break;
+                }
+            }
+            if (!allHintsUsed) break;
+        }
+        if (allHintsUsed) {
+            JOptionPane.showMessageDialog(this, "Congratulations! All cells filled using hints!", "Victory", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -270,17 +308,5 @@ public class GameBoardPanel extends JPanel {
             default:
                 break;
         }
-    }
-
-    public void decreaseLives() {
-        lives--;
-        updateLivesLabel(lives);
-        if (lives <= 0) {
-            showGameOverOptions();
-        }
-    }
-
-    public void updateLivesLabel(int lives) {
-        livesLabel.setText("Lives: " + lives);
     }
 }

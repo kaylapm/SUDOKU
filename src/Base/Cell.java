@@ -15,6 +15,7 @@ public class Cell extends JTextField {
     public static final Color BG_TO_GUESS = Color.YELLOW;
     public static final Color BG_CORRECT_GUESS = new Color(0, 216, 0);
     public static final Color BG_WRONG_GUESS = new Color(216, 0, 0);
+    public static final Color BG_HINT = Color.ORANGE; // New color for hint
     public static final Font FONT_NUMBERS = new Font("OCR A Extended", Font.PLAIN, 28);
 
     int row, col;
@@ -112,5 +113,13 @@ public class Cell extends JTextField {
 
     public int getCol() {
         return col;
+    }
+
+    public void applyHint(int number) {
+        setText(String.valueOf(number));
+        setBackground(BG_HINT);
+        setForeground(FG_GIVEN);
+        status = CellStatus.CORRECT_GUESS;
+        setEditable(false);
     }
 }
