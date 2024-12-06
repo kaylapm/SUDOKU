@@ -224,7 +224,48 @@ public class GameBoardPanel extends JPanel {
     public void checkAndShowWinOptions() {
         if (isSolved()) {
             timer.stop();
-            JOptionPane.showMessageDialog(this, "Congratulations! You've solved the puzzle!", "Victory", JOptionPane.INFORMATION_MESSAGE);
+            int option = JOptionPane.showOptionDialog(
+                    this,
+                    "Congratulations! You have passed the puzzle!",
+                    "Victory",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    new String[]{"Next Level", "Select Level", "Quit Game"},
+                    "Next Level"
+            );
+
+            switch (option) {
+                case 0: // Next Level
+                    if (currentLevel < 5) {
+                        newGame(currentLevel + 1);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "You are already at the highest level.");
+                    }
+                    break;
+                case 1: // Select Level
+                    String[] options = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
+                    int selected = JOptionPane.showOptionDialog(
+                            this,
+                            "Pilih level kesulitan:",
+                            "Select Level",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]
+                    );
+
+                    if (selected != -1) {
+                        newGame(selected + 1);
+                    }
+                    break;
+                case 2: // Quit Game
+                    System.exit(0);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
