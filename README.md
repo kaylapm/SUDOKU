@@ -14,3 +14,6 @@ Pada game sudoku ini, kami membuat fitur tambahan berupa :
 5. Time
 6. Score, benar +10 dan salah -5
 7. Progres cell status (berapa banyak cell yang belum terisi)
+8. Menambahkan fitur hint
+9. Menambahkan fitur live
+10. Menambahkan sound win and lose
